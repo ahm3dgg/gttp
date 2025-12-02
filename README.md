@@ -1,7 +1,7 @@
 # GTTP
 
 A Simple HTTP Server & Library written entirly from Scratch (Except for xxHash and Gzip),
-That I decided to share online.
+I used it as a gateway to learn few things, and think about particuler set of problems and decided to share that online.
 
 ```cpp
 u32 HttpServerMain()
