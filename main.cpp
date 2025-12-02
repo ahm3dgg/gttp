@@ -14,6 +14,7 @@ u32 HttpServerMain()
 	HttpServer server = HttpServerNew(arena, EndpointNew(Str8("0.0.0.0"), IPAddrKind::IPv4, 1337));
 	
 	HttpHandle(server, Str8("/echo/"), [](const HttpRequest& request, HttpResponseWriter& writer) {
+		HttpSetStatus(writer, HttpStatusServerError);
 		HttpAddHeader(writer, Str8("WTF"), Str8("WITH YOU"));
 		HttpSend(writer, Str8("Tsunamii !!!!"));
 	});

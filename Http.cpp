@@ -500,7 +500,8 @@ void HttpSend(const HttpResponseWriter& rw, String8 data)
 	Temp scratch = ScratchBegin();
 
 	String8Builder builder = String8BuilderNew(rw.arena);
-	String8BuilderAppend(builder, Str8("HTTP/1.1 200 OK\r\n"));
+
+	String8BuilderAppend(builder, FormatString(scratch.arena, Str8("HTTP/1.1 %d %s\r\n"), rw.status.code, rw.status.scode));
 	String8BuilderAppend(builder, FormatString(scratch.arena, Str8("Content-Length: %d\r\n"), data.length));
 	String8BuilderAppend(builder, Str8("Content-Type: text/plain\r\n"));
 
@@ -513,6 +514,11 @@ void HttpSend(const HttpResponseWriter& rw, String8 data)
 	String8BuilderAppend(builder, data);
 
 	NetSendAll(rw.sock, builder.str);
+}
+
+void HttpSetStatus(HttpResponseWriter& rw, HttpStatus status)
+{
+	rw.status = status;
 }
 
 void HttpAddHeader(HttpResponseWriter& rw, String8 key, String8 value)

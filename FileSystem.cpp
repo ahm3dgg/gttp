@@ -5,8 +5,8 @@ String8 FsReadFile(Arena* arena, String8 filePath)
 {
 	Temp scratch = {};
 	HANDLE fileHandle = {};
-	u64 fileSizeLow, fileSizeHigh, fileSize = {};
-	DWORD bytesrw = {};
+	u32 fileSize = {};
+	u32 bytesrw = {};
 
 	scratch = ScratchBegin();
 	fileHandle = CreateFileA(String8ToCString(scratch.arena, filePath), GENERIC_READ, FILE_SHARE_READ, 0, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, 0);
@@ -15,20 +15,11 @@ String8 FsReadFile(Arena* arena, String8 filePath)
 		return {};
 	}
 
-	fileSizeLow = GetFileSize(fileHandle, rcast<LPDWORD>(&fileSizeHigh));
+	fileSize = GetFileSize(fileHandle, 0);
 	
-	if (fileSizeHigh)
-	{
-		fileSize = (fileSizeHigh << 32) | fileSizeLow;
-	}
-	else
-	{
-		fileSize = fileSizeLow;
-	}
-
 	char* fileBuf = PushArray(arena, char, fileSize);
 
-	if (!ReadFile(fileHandle, fileBuf, fileSize, &bytesrw, 0))
+	if (!ReadFile(fileHandle, fileBuf, fileSize, rcast<LPDWORD>(&bytesrw), 0))
 	{
 		return {};
 	}

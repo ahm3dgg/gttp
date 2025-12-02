@@ -23,6 +23,22 @@ enum class HttpParserState {
 	ParseBody
 };
 
+enum class HttpStatusCode {
+	Ok = 200,
+	NotFound = 404,
+	ServerError = 500
+};
+
+struct HttpStatus {
+	String8 scode;
+	HttpStatusCode code;
+};
+
+#define DHttpStatus(s, code) HttpStatus(Str8(s), HttpStatusCode::code)
+constexpr HttpStatus HttpStatusOk = DHttpStatus("OK", Ok);
+constexpr HttpStatus HttpStatusNotFound = DHttpStatus("Not Found", NotFound);
+constexpr HttpStatus HttpStatusServerError = DHttpStatus("Server Error", ServerError);
+
 struct HttpRequestParser {
 	HttpParserState state;
 	String8 buffer;
@@ -80,6 +96,7 @@ struct HttpResponseWriter
 {
 	Arena* arena;
 	s64 sock;
+	HttpStatus status;
 	Sll(HttpHeader) headers;
 };
 
@@ -94,6 +111,7 @@ bool HttpListenAndServe(HttpServer& server);
 HttpResponseWriter HttpResponseWriterNew(Arena* arena, s64 socket);
 
 void HttpSend(const HttpResponseWriter& rw, String8 data);
+void HttpSetStatus(HttpResponseWriter& rw, HttpStatus status = HttpStatusOk);
 void HttpAddHeader(HttpResponseWriter& rw, String8 key, String8 value);
 
 void HttpHandle(HttpServer& server, String8 path, HttpRouteHandler handler);
