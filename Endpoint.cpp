@@ -3,12 +3,15 @@
 #include "Endpoint.hpp"
 #include "BinUtils.hpp"
 
+#include <winsock2.h>
+#include <ws2tcpip.h>
+
 IPv4Addr IPParse4(String8 ip)
 {
 	Temp scratch = ScratchBegin();
 
 	IPv4Addr addr = {};
-	//inet_pton(AF_INET, String8ToCString(scratch.arena, ip), &addr.addr);
+	inet_pton(AF_INET, String8ToCString(scratch.arena, ip), &addr.addr);
 
 	ScratchEnd(scratch);
 
@@ -20,7 +23,7 @@ IPv6Addr IPParse6(String8 ip)
 	Temp scratch = ScratchBegin();
 
 	IPv6Addr addr = {};
-	//inet_pton(AF_INET6, String8ToCString(scratch.arena, ip), &addr.addr);
+	inet_pton(AF_INET6, String8ToCString(scratch.arena, ip), &addr.addr);
 
 	ScratchEnd(scratch);
 
