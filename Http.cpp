@@ -302,8 +302,15 @@ HttpServer HttpServerNew(Arena* arena, Endpoint endpoint)
 	WSADATA wsaData = {};
 	sockaddr srvaddr = {};
 
+	u32 threadsCount = OsGetNumberOfProcessors();
+	
+	if (threadsCount < 8)
+	{
+		threadsCount = 8;
+	}
+
 	server.arena = arena;
-	server.threadPool = ThreadPoolNew(arena, OsGetNumberOfProcessors());
+	server.threadPool = ThreadPoolNew(arena, threadsCount);
 	server.routes = PushArray(arena, HttpRouteListEntry, MaxRoutesInSlot);
 
 	result = WSAStartup(MAKEWORD(2, 2), &wsaData);
