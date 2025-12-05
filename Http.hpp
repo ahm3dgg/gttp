@@ -104,12 +104,12 @@ internal(HttpRequestParser) HttpNewParser(const String8& httpRequest);
 internal(HttpRequest) HttpParseRequest(Arena *arena, const String8& httpRequest);
 internal(String8) HttpGetHeaderValueByName(const HttpRequest& httpRequest, const String8& name);
 internal(HttpRouteHandler*) HttpGetHandler(const HttpServer& server, String8 path);
-internal(void) HttpWorker(void* param, bool* persistant);
+internal(proc) HttpWorker(ptr param, bool* persistant);
 internal(HttpResponseWriter) HttpResponseWriterNew(Arena* arena, u64 socket);
 
 HttpServer HttpServerNew(Arena* arena, Endpoint endpoint);
-void HttpSend(const HttpResponseWriter& rw, String8 data);
-void HttpSetStatus(HttpResponseWriter& rw, HttpStatus status = HttpStatusOk);
-void HttpAddHeader(HttpResponseWriter& rw, String8 key, String8 value);
-void HttpHandle(HttpServer& server, String8 path, HttpRouteHandler handler);
+proc HttpSend(const HttpResponseWriter& rw, String8 data);
+proc HttpSetStatus(HttpResponseWriter& rw, HttpStatus status = HttpStatusOk);
+proc HttpAddHeader(HttpResponseWriter& rw, String8 key, String8 value);
+proc HttpHandle(HttpServer& server, String8 path, HttpRouteHandler handler);
 bool HttpListenAndServe(HttpServer& server);

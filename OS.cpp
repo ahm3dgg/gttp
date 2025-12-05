@@ -14,37 +14,37 @@ u64 OsGetLargePageSize()
 	return GetLargePageMinimum();
 }
 
-void* OsMemoryReserveLarge(size_t size)
+ptr OsMemoryReserveLarge(size_t size)
 {
 	return VirtualAlloc(0, size, MEM_RESERVE | MEM_COMMIT | MEM_LARGE_PAGES, PAGE_READWRITE);
 }
 
-bool OsMemoryCommitLarge(void* base, size_t size)
+bool OsMemoryCommitLarge(ptr base, size_t size)
 {
 	return true;
 }
 
-void* OsMemoryReserve(size_t size)
+ptr OsMemoryReserve(size_t size)
 {
 	return VirtualAlloc(0, size, MEM_RESERVE, PAGE_READWRITE);
 }
 
-void* OsMemoryCommit(void* base, size_t size)
+ptr OsMemoryCommit(ptr base, size_t size)
 {
 	return VirtualAlloc(base, size, MEM_COMMIT, PAGE_READWRITE);
 }
 
-bool OsMemoryRelease(void* base, size_t size)
+bool OsMemoryRelease(ptr base, size_t size)
 {
 	return VirtualFree(base, 0, MEM_RELEASE);
 }
 
-OsHandle OsCreateThread(void* func, void* param)
+OsHandle OsCreateThread(ptr func, ptr param)
 {
 	return OsHandle(CreateThread(0, 0, LPTHREAD_START_ROUTINE(func), param, 0, 0));
 }
 
-void OsWaitForThread(OsHandle thread, u32 milliseconds)
+proc OsWaitForThread(OsHandle thread, u32 milliseconds)
 {
 	WaitForSingleObject(HANDLE(thread), milliseconds);
 }

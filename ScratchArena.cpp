@@ -7,7 +7,7 @@ Temp ScratchBegin()
 	return TempBegin(scratchArena);
 }
 
-void ScratchEnd(Temp tmp)
+proc ScratchEnd(Temp tmp)
 {
 	TempEnd(tmp);
 }

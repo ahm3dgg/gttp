@@ -47,7 +47,7 @@ bool FsWriteFile(OsHandle fileHandle, String8 data)
 	return WriteFile(HANDLE(fileHandle), data.data, static_cast<DWORD>(data.length), &bytesrw, 0);
 }
 
-void FsCloseFile(OsHandle fileHandle)
+proc FsCloseFile(OsHandle fileHandle)
 {
 	CloseHandle(HANDLE(fileHandle));
 }

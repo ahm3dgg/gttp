@@ -1,5 +1,6 @@
 #pragma once
 
+#include "Defines.hpp"
 #include "Types.hpp"
 
 typedef size_t OsHandle;
@@ -9,12 +10,13 @@ u64 OsGetPageSize();
 u64 OsGetLargePageSize();
 
 // Memory
-void* OsMemoryReserveLarge(size_t reserveSize);
-bool OsMemoryCommitLarge(void* base, size_t commitSize);
-void* OsMemoryReserve(size_t reserveSize);
-void* OsMemoryCommit(void* base, size_t commitSize);
-bool OsMemoryRelease(void* base, size_t size);
-OsHandle OsCreateThread(void* func, void* param = nullptr);
-void OsWaitForThread(OsHandle thread, u32 milliseconds);
+ptr OsMemoryReserveLarge(size_t reserveSize);
+ptr OsMemoryReserve(size_t reserveSize);
+ptr OsMemoryCommit(ptr base, size_t commitSize);
+bool OsMemoryCommitLarge(ptr base, size_t commitSize);
+bool OsMemoryRelease(ptr base, size_t size);
+proc OsWaitForThread(OsHandle thread, u32 milliseconds);
+
+OsHandle OsCreateThread(ptr func, ptr param = nullptr);
 
 u32 OsGetNumberOfProcessors();

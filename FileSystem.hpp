@@ -7,5 +7,5 @@
 String8 FsReadFile(Arena* arena, String8 filePath);
 OsHandle FsCreateFile(String8 filePath);
 bool FsWriteFile(OsHandle fileHandle, String8 data);
-void FsCloseFile(OsHandle fileHandle);
+proc FsCloseFile(OsHandle fileHandle);
 String8 FsCurDirectory();

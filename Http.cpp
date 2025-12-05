@@ -374,7 +374,7 @@ internal(HttpRouteHandler*) HttpGetHandler(const HttpServer& server, String8 pat
 	return handler;
 }
 
-internal(void) HttpWorker(void* param, bool* persistant)
+internal(proc) HttpWorker(ptr param, bool* persistant)
 {
 	Arena* arena = {};
 	String8 requestBuffer = {};
@@ -495,7 +495,7 @@ internal(HttpResponseWriter) HttpResponseWriterNew(Arena* arena, u64 socket)
 	return { arena, socket };
 }
 
-void HttpSend(const HttpResponseWriter& rw, String8 data)
+proc HttpSend(const HttpResponseWriter& rw, String8 data)
 {
 	Temp scratch = ScratchBegin();
 
@@ -516,12 +516,12 @@ void HttpSend(const HttpResponseWriter& rw, String8 data)
 	NetSendAll(rw.sock, builder.str);
 }
 
-void HttpSetStatus(HttpResponseWriter& rw, HttpStatus status)
+proc HttpSetStatus(HttpResponseWriter& rw, HttpStatus status)
 {
 	rw.status = status;
 }
 
-void HttpAddHeader(HttpResponseWriter& rw, String8 key, String8 value)
+proc HttpAddHeader(HttpResponseWriter& rw, String8 key, String8 value)
 {
 	HttpHeader* header = PushArray(rw.arena, HttpHeader, 1);
 	header->key = key;
@@ -530,7 +530,7 @@ void HttpAddHeader(HttpResponseWriter& rw, String8 key, String8 value)
 	SllPush(rw.headers, next, header);
 } 
 
-void HttpHandle(HttpServer& server, String8 path, HttpRouteHandler handler)
+proc HttpHandle(HttpServer& server, String8 path, HttpRouteHandler handler)
 {
 	Temp scratch = ScratchBegin();
 

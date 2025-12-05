@@ -24,19 +24,19 @@ String8 String8Slice(String8 s, size_t start, size_t end)
 	return slice;
 }
 
-void String8Copy(String8 s1, String8 s2)
+proc String8Copy(String8 s1, String8 s2)
 {
 	if (s1.length < s2.length) return;
 	strncpy_s(s1.data, s1.length, s2.data, s2.length);
 }
 
-void String8CopyAt(String8 s1, String8 s2, size_t at)
+proc String8CopyAt(String8 s1, String8 s2, size_t at)
 {
 	if (s1.length < s2.length) return;
 	CopyMemory(s1.data + at, s2.data, s2.length);
 }
 
-void String8ReplaceInplace(String8 s, char replace, char with)
+proc String8ReplaceInplace(String8 s, char replace, char with)
 {
 	String8 result = s;
 
@@ -220,7 +220,7 @@ String8Builder String8BuilderNew(Arena* arena)
 	return builder;
 }
 
-void String8BuilderAppend(String8Builder& builder, String8 s)
+proc String8BuilderAppend(String8Builder& builder, String8 s)
 {
 	char* str = PushBytes(builder.arena, s.length);
 

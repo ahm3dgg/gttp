@@ -5,4 +5,4 @@
 extern thread_local Arena* scratchArena;
 
 Temp ScratchBegin();
-void ScratchEnd(Temp tmp);
+proc ScratchEnd(Temp tmp);

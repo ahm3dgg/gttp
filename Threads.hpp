@@ -3,12 +3,12 @@
 #include "Types.hpp"
 
 struct ThreadStartParams;
-using ThreadRoutine = u32(*)(void*);
+using ThreadRoutine = u32(*)(ptr);
 
 struct ThreadStartParams
 {
 	ThreadRoutine routine;
-	void* param;
+	ptr param;
 };
 
 u32 ThreadMainEntry(ThreadStartParams* params);
