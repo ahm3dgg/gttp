@@ -80,7 +80,7 @@ Sll_N(HttpRouteListEntry, HttpRoute);
 struct HttpServer
 {
 	Arena* arena;
-	s64 sock;
+	u64 sock;
 	sockaddr addr;
 	ThreadPool* threadPool;
 	HttpRouteListEntry* routes;
@@ -89,29 +89,27 @@ struct HttpServer
 struct HttpWorkerContext
 {
 	HttpServer server;
-	s64 clientSock;
+	u64 clientSock;
 };
 
 struct HttpResponseWriter
 {
 	Arena* arena;
-	s64 sock;
+	u64 sock;
 	HttpStatus status;
 	Sll(HttpHeader) headers;
 };
 
-static HttpRequestParser HttpNewParser(const String8& httpRequest);
-HttpRequest HttpParseRequest(Arena *arena, const String8& httpRequest);
-String8 HttpGetHeaderValueByName(const HttpRequest& httpRequest, const String8& name);
+internal(HttpRequestParser) HttpNewParser(const String8& httpRequest);
+internal(HttpRequest) HttpParseRequest(Arena *arena, const String8& httpRequest);
+internal(String8) HttpGetHeaderValueByName(const HttpRequest& httpRequest, const String8& name);
+internal(HttpRouteHandler*) HttpGetHandler(const HttpServer& server, String8 path);
+internal(void) HttpWorker(void* param, bool* persistant);
+internal(HttpResponseWriter) HttpResponseWriterNew(Arena* arena, u64 socket);
 
 HttpServer HttpServerNew(Arena* arena, Endpoint endpoint);
-HttpRouteHandler* HttpGetHandler(const HttpServer& server, String8 path);
-void HttpWorker(void* param, bool* persistant);
-bool HttpListenAndServe(HttpServer& server);
-HttpResponseWriter HttpResponseWriterNew(Arena* arena, s64 socket);
-
 void HttpSend(const HttpResponseWriter& rw, String8 data);
 void HttpSetStatus(HttpResponseWriter& rw, HttpStatus status = HttpStatusOk);
 void HttpAddHeader(HttpResponseWriter& rw, String8 key, String8 value);
-
 void HttpHandle(HttpServer& server, String8 path, HttpRouteHandler handler);
+bool HttpListenAndServe(HttpServer& server);

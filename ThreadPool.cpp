@@ -29,34 +29,6 @@ ThreadPool *ThreadPoolNew(Arena* arena, u32 threadsCount)
 	return threadPool;
 }
 
-void ThreadPoolSubmit(ThreadPool* threadPool, TaskFunction taskFunction, void* taskParam)
-{
-	EnterCriticalSection(&threadPool->cs);
-	{
-		if (!DllEmpty(threadPool->taskQueueFreeSpots))
-		{
-			EnterCriticalSection(&threadPool->taskFreeSpotsCS);
-			{
-				Task* task = DllPop(threadPool->taskQueueFreeSpots, taskLinks);
-
-				task->worker = taskFunction;
-				task->param = taskParam;
-				QueuePush(threadPool->taskQueue, taskQueueLinks, task);
-			}
-			LeaveCriticalSection(&threadPool->taskFreeSpotsCS);
-		}
-
-		else
-		{
-			Task* task = TaskNew(threadPool->arena, taskFunction, taskParam);
-			QueuePush(threadPool->taskQueue, taskQueueLinks, task);
-		}
-
-		WakeConditionVariable(&threadPool->cv);
-	}
-	LeaveCriticalSection(&threadPool->cs);
-}
-
 void ThreadPoolSubmit(ThreadPool* threadPool, TaskFunction taskFunction, void* taskParam, size_t taskParamSize)
 {
 	EnterCriticalSection(&threadPool->cs);
@@ -90,15 +62,7 @@ void ThreadPoolSubmit(ThreadPool* threadPool, TaskFunction taskFunction, void* t
 	LeaveCriticalSection(&threadPool->cs);
 }
 
-Task* TaskNew(Arena* arena, TaskFunction taskFunction, void* taskParam)
-{
-	Task* task = PushArray(arena, Task, 1);
-	task->worker = taskFunction;
-	task->param = taskParam;
-	return task;
-}
-
-Task* TaskNew(Arena* arena, TaskFunction taskFunction, void* taskParam, size_t taskParamSize)
+internal(Task*) TaskNew(Arena* arena, TaskFunction taskFunction, void* taskParam, size_t taskParamSize)
 {
 	Task* task = PushVarSzStruct(arena, Task, sizeof(Task) + taskParamSize);
 	task->worker = taskFunction;
@@ -107,7 +71,7 @@ Task* TaskNew(Arena* arena, TaskFunction taskFunction, void* taskParam, size_t t
 	return task;
 }
 
-u32 ThreadPoolWorkerWrapper(void* param)
+internal(u32) ThreadPoolWorkerWrapper(void* param)
 {
 	ThreadPool* threadPool = (ThreadPool*)param;
 
@@ -152,7 +116,7 @@ u32 ThreadPoolWorkerWrapper(void* param)
 	}
 }
 
-void ThreadPoolWaitForAll(ThreadPool* threadPool)
+internal(void) ThreadPoolWaitForAll(ThreadPool* threadPool)
 {
 	WaitForMultipleObjects(threadPool->workerThreadCount, (HANDLE*)threadPool->workerThreads, true, INFINITE);
 }

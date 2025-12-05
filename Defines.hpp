@@ -77,6 +77,8 @@ C_LINKAGE void __asan_unpoison_memory_region(void const volatile* addr, size_t s
 # define AsanUnpoisonMemoryRegion(addr, size) ((void)(addr), (void)(size))
 #endif
 
+#define internal(type) static type
+
 inline constexpr char Lower(char c)
 {
 	return c | 0x20;

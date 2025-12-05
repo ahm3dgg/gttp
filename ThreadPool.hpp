@@ -14,8 +14,6 @@ struct Task
 
 	TaskFunction worker;
 	size_t paramSize;
-	void* param;
-
 	char paramData[1];
 };
 
@@ -32,10 +30,9 @@ struct ThreadPool
 	Queue(Task) taskQueue;
 };
 
+internal(Task*) TaskNew(Arena* arena, TaskFunction taskFunction, void* taskParam, size_t taskParamSize);
+internal(u32) ThreadPoolWorkerWrapper(void* param);
+internal(void) ThreadPoolWaitForAll(ThreadPool* threadPool);
+
 ThreadPool* ThreadPoolNew(Arena* arena, u32 threadsCount);
-void ThreadPoolSubmit(ThreadPool* threadPool, TaskFunction taskFunction, void* taskParam);
 void ThreadPoolSubmit(ThreadPool* threadPool, TaskFunction taskFunction, void* taskParam, size_t taskParamSize);
-Task* TaskNew(Arena* arena, TaskFunction taskFunction, void* taskParam);
-Task* TaskNew(Arena* arena, TaskFunction taskFunction, void* taskParam, size_t taskParamSize);
-u32 ThreadPoolWorkerWrapper(void* param);
-void ThreadPoolWaitForAll(ThreadPool* threadPool);

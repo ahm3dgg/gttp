@@ -14,7 +14,7 @@
 
 #include "StringFmt.hpp"
 
-HttpRequestParser HttpNewParser(const String8& httpRequest)
+internal(HttpRequestParser) HttpNewParser(const String8& httpRequest)
 {
 	HttpRequestParser requestParser{};
 
@@ -142,7 +142,7 @@ HttpHeader HttpParseHeader(HttpRequestParser& httpRequestParser)
 	return httpHeader;
 }
 
-String8 HttpGetHeaderValueByName(const HttpRequest& httpRequest, const String8& name)
+internal(String8) HttpGetHeaderValueByName(const HttpRequest& httpRequest, const String8& name)
 {
 	Temp scratch = ScratchBegin();
 
@@ -166,7 +166,7 @@ String8 HttpGetHeaderValueByName(const HttpRequest& httpRequest, const String8& 
 	return result;
 }
 
-HttpRequest HttpParseRequest(Arena* arena, const String8& httpRequestBuffer)
+internal(HttpRequest) HttpParseRequest(Arena* arena, const String8& httpRequestBuffer)
 {
 	HttpRequest httpRequest{.isValid = true};
 	HttpRequestParser httpRequestParser = HttpNewParser(httpRequestBuffer);
@@ -337,7 +337,7 @@ HttpServer HttpServerNew(Arena* arena, Endpoint endpoint)
 	return server;
 }
 
-HttpRouteHandler* HttpGetHandler(const HttpServer& server, String8 path)
+internal(HttpRouteHandler*) HttpGetHandler(const HttpServer& server, String8 path)
 {
 	HttpRouteHandler* handler = {};
 	String8 basePath = {};
@@ -374,7 +374,7 @@ HttpRouteHandler* HttpGetHandler(const HttpServer& server, String8 path)
 	return handler;
 }
 
-void HttpWorker(void* param, bool* persistant)
+internal(void) HttpWorker(void* param, bool* persistant)
 {
 	Arena* arena = {};
 	String8 requestBuffer = {};
@@ -490,7 +490,7 @@ bool HttpListenAndServe(HttpServer& server)
 	}
 }
 
-HttpResponseWriter HttpResponseWriterNew(Arena* arena, s64 socket)
+internal(HttpResponseWriter) HttpResponseWriterNew(Arena* arena, u64 socket)
 {
 	return { arena, socket };
 }
