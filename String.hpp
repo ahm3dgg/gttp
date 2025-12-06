@@ -8,7 +8,7 @@
 
 struct String8;
 
-Array(String8List, String8);
+Array(String8Array, String8);
 struct String8
 {
 	char* data;
@@ -25,6 +25,18 @@ enum class String8CompareFlags
 {
 	CaseInSensitive = 0,
 	CaseSensitive,
+};
+
+struct String8Node
+{
+	String8Node* next;
+	String8 str;
+};
+
+struct String8List
+{
+	size_t count;
+	Sll(String8Node) list;
 };
 
 using FieldsFunc = bool(*)(char);
@@ -50,11 +62,13 @@ char String8Index(String8 s, size_t index);
 size_t String8Length(String8 s);
 char* String8Data(String8 s);
 
-String8List String8Fields(Arena* arena, String8 s, FieldsFunc f);
+String8List* String8FieldsList(Arena* arena, String8 s, FieldsFunc f);
+String8Array String8Fields(Arena* arena, String8 s, FieldsFunc f);
 
 String8 PushStr(Arena* arena, const char* s);
 
 char* String8ToCString(Arena* arena, String8 s);
+String8 CStringToString8(char* s);
 
 bool String8EndsWith(String8 s1, String8 s2);
 bool String8StartsWith(String8 s1, String8 s2);

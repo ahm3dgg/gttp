@@ -122,57 +122,87 @@ bool String8Contains(String8 s1, String8 s2, String8CompareFlags flags)
 	return result;
 }
 
-String8List String8Fields(Arena* arena, String8 s, FieldsFunc f)
+String8List* String8FieldsList(Arena* arena, String8 s, FieldsFunc f)
 {
-	size_t i = 0;
-	String8 curstr{};
-	String8List fields{};
-
-	while (i < s.length)
+	if (s.length == 0)
 	{
-		if (f(s.data[i]))
-		{
-			if (!String8IsEmpty(curstr))
-			{
-				if (fields.length == 0)
-				{
-					fields.entries = PushArrayAligned(arena, String8, 1, 1);
-				}
-				else
-				{
-					PushArrayAligned(arena, String8, 1, 1);
-				}
+		return nullptr;
+	}
 
-				ArrayAppend(fields, curstr);
-				curstr = {};
+	String8List* slist = PushArray(arena, String8List, 1);
+	size_t pos = 0;
+
+	while (pos < s.length)
+	{
+		if (pos < s.length && !f(s.data[pos]))
+		{
+			String8Node* field = PushArray(arena, String8Node, 1);
+			field->str = String8Slice(s, pos, pos + 1);
+			pos++;
+
+			while (pos < s.length && !f(s.data[pos]))
+			{
+				pos++;
+				field->str.length++;
+			}
+
+			slist->count++;
+			SllPush(slist->list, next, field);
+		}
+
+		else
+		{
+			pos++;
+		}
+	}
+
+	return slist;
+}
+
+
+String8Array String8Fields(Arena* arena, String8 s, FieldsFunc f)
+{
+	if (s.length == 0)
+	{
+		return {};
+	}
+
+	String8Array sarray = {};
+	sarray.cap = 512;
+	sarray.entries = PushStructNoAlign(arena, String8, sarray.cap);
+
+	size_t pos = 0;
+	while (pos < s.length)
+	{
+		if (pos < s.length && !f(s.data[pos]))
+		{
+			String8 field = String8Slice(s, pos, pos + 1);
+			pos++;
+
+			while (pos < s.length && !f(s.data[pos]))
+			{
+				pos++;
+				field.length++;
+			}
+
+			if (sarray.len >= sarray.cap)
+			{
+				PushStructNoAlign(arena, String8, sarray.cap * 2);
+				sarray.entries[sarray.len++] = field;
+			}
+			else
+			{
+				sarray.entries[sarray.len++] = field;
 			}
 		}
 
 		else
 		{
-			if (String8IsEmpty(curstr) && isascii(s.data[i]))
-			{
-				curstr.data = &s.data[i];
-			}
-
-			curstr.length++;
+			pos++;
 		}
-
-		i++;
 	}
 
-	// Push Last String
-	if (!String8IsEmpty(curstr))
-	{
-		if (ArrayLength(fields) == 0)
-		{
-			fields.entries = PushArrayAligned(arena, String8, 1, 1);
-		}
-
-		ArrayAppend(fields, curstr);
-	}
-
-	return fields;
+	return sarray;
 }
 
 String8 PushStr(Arena* arena, const char* s)
@@ -192,6 +222,20 @@ char* String8ToCString(Arena* arena, String8 s)
 	char* snt = PushArray(arena, char, s.length + 1);
 	memcpy(snt, s.data, s.length);
 	return snt;
+}
+
+String8 CStringToString8(char* s)
+{
+	String8 result = {};
+
+	result.data = s;
+	
+	for (size_t i = 0; s[i] != '\0'; i++)
+	{
+		result.length++;
+	}
+
+	return result;
 }
 
 bool String8EndsWith(String8 s1, String8 s2)
@@ -278,6 +322,11 @@ bool String8Equals(String8 s1, String8 s2, String8CompareFlags flags)
 bool String8CompareSlice(String8 s1, size_t start, size_t end, String8 s2)
 {
 	return String8Equals(String8Slice(s1, start, end), s2);
+}
+
+char String8Index(String8 s, size_t index)
+{
+	return s.data[index];
 }
 
 size_t String8Length(String8 s)

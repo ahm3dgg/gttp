@@ -73,5 +73,6 @@ void TempEnd(Temp temp);
 #define PushArray(a, T, c) PushArrayAligned(a, T, c, Max(8, AlignOf(T)))
 #define PushVarSzStruct(a, T, sz) (T *)ArenaPush((a), sz, Max(8, AlignOf(T)))
 #define PushBytes(a, c) (char*)ArenaPush((a), (c), 1)
+#define PushStructNoAlign(a, T, c) (T*)ArenaPush((a), sizeof(T) * c, 1)
 
 #endif
